@@ -1,0 +1,584 @@
+<!doctype html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <title>Epic Gift</title>
+  <script src="https://paxta.online/js/paxtagram-web-app.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap');
+
+    *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+    body{font-family:'Montserrat',sans-serif;background:#14151a;color:#fff;min-height:100vh;padding-bottom:80px;overflow-x:hidden}
+    
+    /* Header */
+    header{display:flex;justify-content:space-between;align-items:center;padding:16px;padding-top:20px}
+    .user-info{display:flex;align-items:center;gap:10px}
+    .avatar{width:40px;height:40px;background:linear-gradient(135deg,#6ee7b7,#3b82f6);border-radius:50%;border:2px solid #2a2d36}
+    .balance-text{font-size:11px;color:#8b8e96;font-weight:600;margin-bottom:2px}
+    .balance-amount{display:flex;align-items:center;gap:6px;font-size:18px;font-weight:800}
+    .balance-amount span{color:#fff}
+    .star-icon{color:#3b82f6;font-size:20px}
+    .deposit-btn{background:#8b5cf6;color:#fff;border:none;padding:10px 16px;border-radius:12px;font-weight:700;font-size:13px;display:flex;align-items:center;gap:6px;box-shadow:0 4px 12px rgba(139,92,246,0.3);cursor:pointer}
+    .deposit-btn::before{content:'💳';font-size:16px}
+
+    /* Live Bar */
+    .live-bar{display:flex;align-items:center;gap:10px;padding:0 16px;margin-bottom:12px}
+    .live-indicator{color:#22c55e;font-size:12px;font-weight:700;display:flex;align-items:center;gap:4px}
+    .live-indicator::before{content:'';display:block;width:6px;height:6px;background:#22c55e;border-radius:50%;box-shadow:0 0 6px #22c55e}
+    .live-items{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
+    .live-items::-webkit-scrollbar{display:none}
+    .live-item{min-width:50px;height:60px;background:#2a2d36;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;position:relative}
+    .live-item::after{content:'🔥';position:absolute;top:2px;right:2px;font-size:10px}
+
+    /* Cards Container */
+    .cards-container{padding:0 16px;display:flex;flex-direction:column;gap:12px}
+
+    /* Big Cards */
+    .big-card{width:100%;border-radius:20px;padding:20px;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:center;box-shadow:0 8px 24px rgba(0,0,0,0.2);cursor:pointer}
+    .big-card:hover{transform:translateY(-2px);transition:0.2s}
+    .card-tag{position:absolute;top:12px;left:12px;background:rgba(255,255,255,0.2);backdrop-filter:blur(4px);color:#fff;padding:4px 10px;border-radius:8px;font-size:10px;font-weight:800;letter-spacing:0.5px;display:flex;align-items:center;gap:4px}
+    .card-tag.hot{background:#fff;color:#ff5e3a}
+    .card-tag.new{background:#fff;color:#8b5cf6}
+    .card-tag.hot::before{content:'🔥'}
+    .card-tag.new::before{content:'✨'}
+    
+    .card-title{font-size:28px;font-weight:900;text-transform:uppercase;margin-top:20px;letter-spacing:1px;z-index:2;line-height:1.1}
+    .card-subtitle{font-size:12px;font-weight:600;opacity:0.9;margin-top:4px;z-index:2}
+
+    /* Card 1: Rocket */
+    .card-rocket{background:linear-gradient(135deg,#38bdf8,#3b82f6);min-height:110px}
+    .card-rocket .card-title{color:#fff;text-shadow:0 2px 4px rgba(0,0,0,0.2)}
+    .rocket-ship{position:absolute;right:-10px;bottom:-10px;font-size:90px;transform:rotate(-15deg);filter:drop-shadow(0 4px 8px rgba(0,0,0,0.2));z-index:1}
+
+    /* Card 2: PvP */
+    .card-pvp{background:linear-gradient(135deg,#fbbf24,#f59e0b);min-height:110px}
+    .card-pvp .card-title{color:#fff;text-shadow:0 2px 4px rgba(0,0,0,0.2);display:flex;align-items:center;gap:8px}
+    .card-pvp .card-title::before{content:'⚔️';font-size:24px}
+    .pvp-avatars{display:flex;gap:8px;margin-top:12px;z-index:2}
+    .pvp-avatar{width:36px;height:36px;background:#2a2d36;border-radius:50%;border:2px solid #fff;display:flex;align-items:center;justify-content:center;font-size:18px;position:relative}
+    .pvp-avatar::after{content:'';position:absolute;bottom:-14px;left:50%;transform:translateX(-50%);width:30px;height:14px;background:#2a2d36;border-radius:4px;font-size:8px;font-weight:800;color:#fff;display:flex;align-items:center;justify-content:center;content:attr(data-percent)}
+
+    /* Card 3: Play Hub */
+    .card-hub{background:linear-gradient(135deg,#8b5cf6,#6d28d9);min-height:110px}
+    .card-hub .card-title{color:#fff;text-shadow:0 2px 4px rgba(0,0,0,0.2);display:flex;align-items:center;gap:8px}
+    .card-hub .card-title::before{content:'🎮';font-size:24px}
+    .hub-icons{position:absolute;right:-10px;bottom:-10px;display:flex;gap:-10px;z-index:1}
+    .hub-icon{width:60px;height:60px;background:rgba(255,255,255,0.15);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:30px;transform:rotate(-10deg)}
+    .hub-icon:nth-child(2){transform:rotate(10deg);margin-left:-20px;background:rgba(59,130,246,0.4)}
+    .hub-icon:nth-child(3){transform:rotate(-5deg);margin-left:-20px;background:rgba(139,92,246,0.4)}
+
+    /* Bottom Nav */
+    .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#1a1c23;border-top:1px solid #2a2d36;display:flex;justify-content:space-around;padding:10px 0 20px 0;z-index:100}
+    .nav-item{display:flex;flex-direction:column;align-items:center;gap:4px;color:#8b8e96;font-size:10px;font-weight:600;cursor:pointer;padding:4px 8px;border-radius:8px}
+    .nav-item.active{color:#fff}
+    .nav-item .icon{font-size:20px;margin-bottom:2px}
+    .nav-item.center .icon-wrap{width:40px;height:40px;background:#3b82f6;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:4px;box-shadow:0 4px 12px rgba(59,130,246,0.4)}
+    .badge{position:absolute;top:-4px;right:-4px;background:#ef4444;color:#fff;font-size:9px;font-weight:800;padding:2px 6px;border-radius:10px;border:2px solid #1a1c23}
+
+    /* Tabs */
+    .tab{display:none;padding:0 16px}
+    .tab.active{display:block}
+    h2{font-size:16px;font-weight:700;margin-bottom:12px;color:#fff;margin-top:10px}
+
+    /* Generic Cards (list items) */
+    .list-card{background:#1a1c23;border-radius:14px;padding:12px;margin-bottom:10px;display:flex;gap:12px;align-items:center;border:1px solid #2a2d36}
+    .list-card img{width:50px;height:50px;border-radius:10px;object-fit:cover;background:#2a2d36}
+    .list-card .info{flex:1}
+    .list-card .title{font-weight:700;font-size:14px}
+    .list-card .price{color:#fbbf24;font-size:12px;margin-top:2px;font-weight:600}
+    .list-card button{background:#3b82f6;border:none;color:#fff;padding:8px 16px;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer}
+    .list-card button:disabled{background:#2a2d36;color:#666}
+    
+    /* Rockets */
+    .rocket-btn{display:block;width:100%;margin:10px 0;padding:16px;background:#1a1c23;border:1px solid #2a2d36;border-radius:14px;color:#fff;font-size:16px;font-weight:700;cursor:pointer;text-align:left;display:flex;justify-content:space-between;align-items:center}
+    .rocket-btn::after{content:'🚀';font-size:20px}
+    .rocket-btn:hover{border-color:#3b82f6}
+    
+    /* Mines Grid */
+    #mines-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:16px 0}
+    .mine-cell{aspect-ratio:1;background:#1a1c23;border:1px solid #2a2d36;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:24px;user-select:none;transition:.1s}
+    .mine-cell:hover{border-color:#3b82f6;background:#222530}
+    .mine-cell.safe{background:#16a34a22;border-color:#16a34a}
+    .mine-cell.bomb{background:#dc262622;border-color:#dc2626}
+    .mine-cell:disabled{cursor:default}
+    .mines-controls{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;align-items:center;background:#1a1c23;padding:12px;border-radius:14px;border:1px solid #2a2d36}
+    .mines-controls input,.mines-controls select{width:80px;padding:10px;background:#2a2d36;border:none;color:#fff;border-radius:8px;font-weight:600;font-size:14px}
+    .mines-controls button{padding:10px 16px;background:#3b82f6;color:#fff;border:none;border-radius:8px;font-weight:700;cursor:pointer;flex:1}
+    #mines-status{margin:12px 0;font-size:15px;text-align:center;font-weight:600;min-height:24px}
+    #mines-cashout{margin-top:10px;padding:14px;width:100%;background:#22c55e;color:#fff;border:none;border-radius:12px;font-weight:800;font-size:15px;cursor:pointer}
+    
+    /* Toast */
+    #toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#3b82f6;color:#fff;padding:12px 20px;border-radius:12px;font-weight:700;opacity:0;transition:.3s;pointer-events:none;z-index:200;box-shadow:0 8px 24px rgba(59,130,246,0.3)}
+    #toast.show{opacity:1}
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="user-info">
+    <div class="avatar"></div>
+    <div>
+      <div class="balance-text">Your balance</div>
+      <div class="balance-amount">
+        <span class="star-icon">💎</span>
+        <span id="bal">0</span>
+      </div>
+    </div>
+  </div>
+  <button class="deposit-btn" id="deposit-btn">Deposit</button>
+</header>
+
+<!-- LIVE BAR -->
+<div class="live-bar">
+  <div class="live-indicator">Live</div>
+  <div class="live-items">
+    <div class="live-item">🧰</div>
+    <div class="live-item">📕</div>
+    <div class="live-item">💎</div>
+    <div class="live-item">🍧</div>
+    <div class="live-item">🍩</div>
+    <div class="live-item">🎂</div>
+  </div>
+</div>
+
+<!-- MAIN CONTENT AREA -->
+<main>
+  
+  <!-- HOME TAB -->
+  <section id="home" class="tab active">
+    <div class="cards-container">
+      <!-- ROCKET CARD -->
+      <div class="big-card card-rocket" onclick="switchTab('rocket')">
+        <div class="card-tag hot">HOT</div>
+        <div class="card-title">Rocket</div>
+        <div class="card-subtitle">Crash game. Cash out before it's too late.</div>
+        <div class="rocket-ship">🚀</div>
+      </div>
+
+      <!-- PVP CARD -->
+      <div class="big-card card-pvp">
+        <div class="card-title">PvP</div>
+        <div class="card-subtitle">Fight with others</div>
+        <div class="pvp-avatars">
+          <div class="pvp-avatar" data-percent="6.3%">🤠</div>
+          <div class="pvp-avatar" data-percent="8.6%">🤠</div>
+          <div class="pvp-avatar" data-percent="8.2%">🤠</div>
+        </div>
+      </div>
+
+      <!-- PLAY HUB CARD -->
+      <div class="big-card card-hub" onclick="switchTab('mines')">
+        <div class="card-tag new">NEW</div>
+        <div class="card-title">Play Hub</div>
+        <div class="card-subtitle">Upgrade, Mines, and more!</div>
+        <div class="hub-icons">
+          <div class="hub-icon">🔄</div>
+          <div class="hub-icon">💣</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Topup / Gifts (hidden inside HOME for now) -->
+    <h2 style="margin-top:24px">Top up</h2>
+    <div id="topup-list"></div>
+  </section>
+
+  <!-- KEYS TAB (Not in bottom nav, but accessible) -->
+  <section id="keys" class="tab">
+    <h2>Keyslar</h2>
+    <div id="keys-list"></div>
+  </section>
+
+  <!-- ROCKET TAB -->
+  <section id="rocket" class="tab">
+    <h2>🚀 Rocket Game</h2>
+    <p style="margin-bottom:12px;color:#8b8e96;font-size:14px">Win chance: <b id="winpct" style="color:#fff">—</b></p>
+    <div id="rocket-bets"></div>
+    <div id="rocket-result" style="margin-top:20px;font-size:20px;text-align:center;min-height:30px;font-weight:800"></div>
+  </section>
+
+  <!-- MINES TAB -->
+  <section id="mines" class="tab">
+    <h2>💣 Mines</h2>
+    <div class="mines-controls">
+      <input id="mines-bet" type="number" value="50" placeholder="Bet" />
+      <select id="mines-count">
+        <option value="3">3 mines</option>
+        <option value="5">5 mines</option>
+        <option value="10">10 mines</option>
+      </select>
+      <button id="mines-start">Start</button>
+    </div>
+    <div id="mines-grid"></div>
+    <div id="mines-status"></div>
+    <button id="mines-cashout" style="display:none">💰 Cashout</button>
+  </section>
+
+  <!-- CONTEST (Leaderboard) TAB -->
+  <section id="contest" class="tab">
+    <h2>🏆 Leaderboard</h2>
+    <div id="contest-list">Loading...</div>
+  </section>
+
+  <!-- ADMIN TAB -->
+  <section id="admin" class="tab">
+    <h2>⚙️ Settings</h2>
+    <div class="list-card" style="flex-wrap:wrap;flex-direction:column;align-items:stretch;gap:12px">
+      <label style="display:flex;justify-content:space-between;font-size:14px;font-weight:600">Rocket Win % <input id="s_rocket_win_pct" type="number" style="width:80px;padding:6px;background:#2a2d36;border:none;color:#fff;border-radius:6px;text-align:right"></label>
+      <label style="display:flex;justify-content:space-between;font-size:14px;font-weight:600">Mines Win % <input id="s_mines_win_pct" type="number" style="width:80px;padding:6px;background:#2a2d36;border:none;color:#fff;border-radius:6px;text-align:right"></label>
+      <label style="display:flex;justify-content:space-between;font-size:14px;font-weight:600">Min Bet <input id="s_rocket_min_bet" type="number" style="width:80px;padding:6px;background:#2a2d36;border:none;color:#fff;border-radius:6px;text-align:right"></label>
+      <label style="display:flex;justify-content:space-between;font-size:14px;font-weight:600">Max Bet <input id="s_max_stars_all_games" type="number" style="width:80px;padding:6px;background:#2a2d36;border:none;color:#fff;border-radius:6px;text-align:right"></label>
+      <label style="display:flex;justify-content:space-between;font-size:14px;font-weight:600">Contest (0/1) <input id="s_contest_active" type="number" style="width:80px;padding:6px;background:#2a2d36;border:none;color:#fff;border-radius:6px;text-align:right"></label>
+      <button id="save-settings" style="margin-top:8px;padding:12px;background:#3b82f6;color:#fff;border:none;border-radius:8px;font-weight:700;cursor:pointer">Save Settings</button>
+    </div>
+
+    <h2>🔑 Keys</h2>
+    <div class="list-card" style="flex-wrap:wrap;gap:8px">
+      <input id="k_name" placeholder="Key name" style="flex:1;padding:8px;background:#2a2d36;border:none;color:#fff;border-radius:8px" />
+      <input id="k_price" type="number" placeholder="Price" style="width:80px;padding:8px;background:#2a2d36;border:none;color:#fff;border-radius:8px" />
+      <input id="k_photo" placeholder="Photo URL" style="flex:1;padding:8px;background:#2a2d36;border:none;color:#fff;border-radius:8px" />
+      <button id="k_add" style="padding:8px 16px;background:#3b82f6;color:#fff;border:none;border-radius:8px;font-weight:700;cursor:pointer">Add</button>
+    </div>
+    <div id="admin-keys-list" style="margin-top:10px"></div>
+
+    <h2>🎁 Gifts</h2>
+    <div class="list-card" style="flex-wrap:wrap;gap:8px">
+      <input id="g_name" placeholder="Gift name" style="flex:1;padding:8px;background:#2a2d36;border:none;color:#fff;border-radius:8px" />
+      <input id="g_photo" placeholder="Image URL" style="flex:1;padding:8px;background:#2a2d36;border:none;color:#fff;border-radius:8px" />
+      <input id="g_price" type="number" placeholder="Stars" style="width:60px;padding:8px;background:#2a2d36;border:none;color:#fff;border-radius:8px" />
+      <button id="g_add" style="padding:8px 16px;background:#3b82f6;color:#fff;border:none;border-radius:8px;font-weight:700;cursor:pointer">Add</button>
+    </div>
+    <div id="admin-gifts-list" style="margin-top:10px"></div>
+    
+    <h2>🏆 Contest</h2>
+    <button id="contest-finish" style="padding:12px;width:100%;background:#ef4444;color:#fff;border:none;border-radius:8px;font-weight:700;cursor:pointer">Announce Winners</button>
+  </section>
+</main>
+
+<!-- BOTTOM NAVIGATION -->
+<div class="bottom-nav">
+  <div class="nav-item" onclick="switchTab('backpack')">
+    <div class="icon">🎒</div>
+    <span>Backpack</span>
+  </div>
+  <div class="nav-item" onclick="toast('Tez kunda!')">
+    <div class="icon">👥</div>
+    <span>Invite</span>
+  </div>
+  <div class="nav-item center active" onclick="switchTab('home')">
+    <div class="icon-wrap"><div class="icon" style="margin-bottom:0;color:#fff">🏠</div></div>
+    <span>Home</span>
+  </div>
+  <div class="nav-item" onclick="switchTab('contest')">
+    <div class="icon">🏆</div>
+    <span>Leaderboard</span>
+  </div>
+  <div class="nav-item" onclick="switchTab('keys')">
+    <div class="icon" style="position:relative">💰
+      <div class="badge">21</div>
+    </div>
+    <span>Earn</span>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<!-- SCRIPT -->
+<script>
+const app = PaxtaGram.WebApp;
+app.ready(); app.expand?.();
+const API = location.origin;
+const initData = app.initData;
+
+// Helper: API call
+async function api(path, opts = {}) {
+  const r = await fetch(API + path, {
+    ...opts,
+    headers: { "Content-Type": "application/json", "X-Init-Data": initData, ...(opts.headers || {}) },
+  });
+  return r.json();
+}
+
+// Helper: Toast
+function toast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.classList.add("show");
+  clearTimeout(window._t); window._t = setTimeout(() => t.classList.remove("show"), 2000);
+}
+
+// Helper: Switch Tabs
+function switchTab(tabId) {
+  document.querySelectorAll("main .tab").forEach(x => x.classList.remove("active"));
+  const target = document.getElementById(tabId);
+  if (target) target.classList.add("active");
+  
+  // Update bottom nav active state
+  document.querySelectorAll(".nav-item").forEach(x => x.classList.remove("active"));
+  // Find matching bottom nav item based on tabId
+  const navItems = document.querySelectorAll(".nav-item");
+  navItems.forEach(item => {
+    const text = item.querySelector("span").textContent.toLowerCase();
+    if ((tabId === 'home' && text === 'home') || 
+        (tabId === 'contest' && text === 'leaderboard') || 
+        (tabId === 'keys' && text === 'earn')) {
+      item.classList.add("active");
+    }
+  });
+}
+
+// Helper: Update Balance
+let balance = 0;
+function setBalance(b) { 
+  balance = b; 
+  document.getElementById("bal").textContent = b; 
+}
+
+// ===== USER DATA =====
+async function refreshMe() {
+  const me = await api("/api/me");
+  if (me.error) return toast("Auth error");
+  setBalance(me.balance);
+}
+
+// ===== HOME =====
+const TOPUPS = [{ stars: 10, coins: 100 }, { stars: 45, coins: 500 }, { stars: 80, coins: 1000 }, { stars: 150, coins: 2000 }];
+function renderTopups() {
+  const el = document.getElementById("topup-list"); el.innerHTML = "";
+  TOPUPS.forEach(t => {
+    const div = document.createElement("div");
+    div.className = "list-card";
+    div.innerHTML = `<div class="info"><div class="title">${t.coins} Coins</div>
+      <div class="price">${t.stars}⭐</div></div><button>Buy</button>`;
+    div.querySelector("button").onclick = async () => {
+      const r = await api("/api/topup/link", { method: "POST", body: JSON.stringify({ stars: t.stars }) });
+      if (r.url) app.openInvoice(r.url, (status) => {
+        if (status === "paid") { toast("Payment accepted!"); refreshMe(); }
+      });
+      else toast("Error: " + (r.error || "?"));
+    };
+    el.appendChild(div);
+  });
+}
+
+// Deposit button in header
+document.getElementById("deposit-btn").onclick = () => {
+  document.getElementById("home").classList.add("active");
+  toast("Scroll down to top up!");
+};
+
+// ===== KEYS =====
+async function loadKeys() {
+  const items = await api("/api/keys");
+  const el = document.getElementById("keys-list"); el.innerHTML = "";
+  if (!items.length) { el.innerHTML = "<p style='color:#8b8e96'>No keys yet.</p>"; return; }
+  items.forEach(k => {
+    const price = k.price_stars === 0 ? "FREE" : `${k.price_stars} coins`;
+    const div = document.createElement("div");
+    div.className = "list-card";
+    div.innerHTML = `
+      ${k.photo_url ? `<img src="${k.photo_url}" />` : "<div style='width:50px;height:50px;background:#2a2d36;border-radius:10px'></div>"}
+      <div class="info"><div class="title">${k.name}</div>
+      <div class="price">${price}</div></div>
+      <button>Open</button>`;
+    div.querySelector("button").onclick = async () => {
+      const r = await api(`/api/keys/${k.id}/open`, { method: "POST", body: "{}" });
+      if (r.error) return toast(r.error);
+      toast(`🎉 ${r.reward.title}`);
+      if (r.reward.gift_photo) {
+        app.showPopup?.({ title: r.reward.title, message: "🎁 Gift", buttons: [{ type: "ok" }] });
+      }
+      setBalance(r.balance);
+    };
+    el.appendChild(div);
+  });
+}
+
+// ===== ROCKET =====
+let rocketCfg = { min_bet: 50, max_bet: 500, win_pct: 45 };
+async function loadRocket() {
+  rocketCfg = await api("/api/rocket");
+  document.getElementById("winpct").textContent = rocketCfg.win_pct + "%";
+  const el = document.getElementById("rocket-bets"); el.innerHTML = "";
+  [50, 100, 200, 500].filter(b => b >= rocketCfg.min_bet && b <= rocketCfg.max_bet)
+    .forEach(bet => {
+      const b = document.createElement("button");
+      b.className = "rocket-btn"; b.innerHTML = `<span>${bet} coins</span>`;
+      b.onclick = async () => {
+        const r = await api("/api/rocket/bet", { method: "POST", body: JSON.stringify({ bet }) });
+        if (r.error) return toast(r.error);
+        setBalance(r.balance);
+        document.getElementById("rocket-result").innerHTML = r.win
+          ? `<span style="color:#22c55e">🚀 Won! +${bet}</span>`
+          : `<span style="color:#ef4444">💥 Crashed -${bet}</span>`;
+      };
+      el.appendChild(b);
+    });
+}
+
+// ===== MINES =====
+let minesState = { game_id: null, opened: [] };
+document.getElementById("mines-start").onclick = async () => {
+  const bet = Number(document.getElementById("mines-bet").value);
+  const mines = Number(document.getElementById("mines-count").value);
+  const r = await api("/api/mines/start", { method: "POST", body: JSON.stringify({ bet, mines }) });
+  if (r.error) return toast(r.error);
+  minesState = { game_id: r.game_id, opened: [] };
+  setBalance(r.balance);
+  renderMinesGrid(true);
+  document.getElementById("mines-status").textContent = "Game started. Pick a cell!";
+  document.getElementById("mines-cashout").style.display = "block";
+};
+function renderMinesGrid(active) {
+  const grid = document.getElementById("mines-grid");
+  grid.innerHTML = "";
+  for (let i = 0; i < 25; i++) {
+    const cell = document.createElement("button");
+    cell.className = "mine-cell";
+    cell.textContent = minesState.opened.includes(i) ? "💎" : "";
+    cell.disabled = !active || minesState.opened.includes(i);
+    cell.onclick = () => clickMine(i);
+    grid.appendChild(cell);
+  }
+}
+async function clickMine(i) {
+  if (!minesState.game_id) return;
+  const r = await api("/api/mines/click", { method: "POST",
+    body: JSON.stringify({ game_id: minesState.game_id, cell: i }) });
+  if (r.error) return toast(r.error);
+  setBalance(r.balance);
+  if (!r.safe) {
+    document.getElementById("mines-status").innerHTML = "<span style='color:#ef4444'>💥 BOMB! You lost.</span>";
+    minesState.opened.push(i);
+    renderMinesGrid(false);
+    const bombCell = document.getElementById("mines-grid").children[i];
+    bombCell.classList.add("bomb"); bombCell.textContent = "💣";
+    minesState = { game_id: null, opened: [] };
+    document.getElementById("mines-cashout").style.display = "none";
+    return;
+  }
+  minesState.opened.push(i);
+  renderMinesGrid(true);
+  document.getElementById("mines-status").textContent = `✅ Safe! x${r.multiplier?.toFixed(2) || "1.00"}`;
+  if (r.autoWon) {
+    document.getElementById("mines-status").innerHTML = `<span style='color:#22c55e'>🎉 You won! +${r.payout}</span>`;
+    minesState = { game_id: null, opened: [] };
+    document.getElementById("mines-cashout").style.display = "none";
+    renderMinesGrid(false);
+  }
+}
+document.getElementById("mines-cashout").onclick = async () => {
+  if (!minesState.game_id) return;
+  const r = await api("/api/mines/cashout", { method: "POST", body: JSON.stringify({ game_id: minesState.game_id }) });
+  if (r.error) return toast(r.error);
+  setBalance(r.balance);
+  toast(`💰 +${r.payout} coins`);
+  minesState = { game_id: null, opened: [] };
+  document.getElementById("mines-status").innerHTML = `<span style='color:#22c55e'>Cashed out: +${r.payout}</span>`;
+  document.getElementById("mines-cashout").style.display = "none";
+  renderMinesGrid(false);
+};
+
+// ===== CONTEST =====
+async function loadContest() {
+  const c = await api("/api/contest");
+  const el = document.getElementById("contest-list");
+  if (!c.active) { el.innerHTML = "<p style='color:#8b8e96'>No active contest.</p>"; return; }
+  if (!c.top.length) { el.innerHTML = "<p style='color:#8b8e96'>No participants yet.</p>"; return; }
+  el.innerHTML = c.top.map((t, i) =>
+    `<div class="list-card" style="border-left:4px solid ${i===0?'gold':i===1?'silver':i===2?'#cd7f32':'transparent'}">
+      <div class="info">
+        <div class="title">${i + 1}. ${t.first_name || "User"}</div>
+      </div>
+      <div class="price">${t.stars_spent}⭐</div>
+    </div>`).join("");
+}
+
+// ===== ADMIN =====
+async function loadAdmin() {
+  // Only load if the elements exist (prevents errors if admin tab is hidden)
+  if (!document.getElementById("s_rocket_win_pct")) return;
+  
+  const s = await api("/api/admin/settings");
+  if (s.error) return;
+  ["rocket_win_pct","mines_win_pct","rocket_min_bet","max_stars_all_games","contest_active"]
+    .forEach(k => { const el = document.getElementById("s_" + k); if (el) el.value = s[k] ?? 0; });
+
+  const keys = await api("/api/admin/keys");
+  const kel = document.getElementById("admin-keys-list"); kel.innerHTML = "";
+  keys.forEach(k => {
+    const div = document.createElement("div");
+    div.className = "list-card";
+    div.innerHTML = `<div class="info"><div class="title">${k.name}</div><div class="price">${k.price_stars} coins</div></div>
+      <div style="display:flex;gap:4px"><button style="background:#f59e0b">+ Rew</button><button style="background:#ef4444">Del</button></div>`;
+    div.querySelectorAll("button")[1].onclick = async () => {
+      if (!confirm("Delete?")) return;
+      await api(`/api/admin/keys/${k.id}`, { method: "DELETE" });
+      toast("Deleted"); loadAdmin(); loadKeys();
+    };
+    kel.appendChild(div);
+  });
+
+  const gifts = await api("/api/admin/gifts");
+  const gel = document.getElementById("admin-gifts-list"); gel.innerHTML = "";
+  gifts.forEach(g => {
+    const div = document.createElement("div");
+    div.className = "list-card";
+    div.innerHTML = `<div class="info"><div class="title">${g.name}</div><div class="price">${g.rarity}</div></div>
+      <button style="background:#ef4444">Del</button>`;
+    div.querySelector("button").onclick = async () => {
+      if (!confirm("Delete?")) return;
+      await api(`/api/admin/gifts/${g.id}`, { method: "DELETE" });
+      toast("Deleted"); loadAdmin();
+    };
+    gel.appendChild(div);
+  });
+}
+
+document.getElementById("save-settings").onclick = async () => {
+  const body = {};
+  ["rocket_win_pct","mines_win_pct","rocket_min_bet","max_stars_all_games","contest_active"]
+    .forEach(k => { const el = document.getElementById("s_" + k); if (el) body[k] = Number(el.value); });
+  await api("/api/admin/settings", { method: "POST", body: JSON.stringify(body) });
+  toast("Settings saved"); loadRocket();
+};
+
+document.getElementById("k_add").onclick = async () => {
+  const name = document.getElementById("k_name").value.trim();
+  if (!name) return toast("Enter name");
+  const price_stars = Number(document.getElementById("k_price").value) || 0;
+  const photo_url = document.getElementById("k_photo").value.trim() || null;
+  await api("/api/admin/keys", { method: "POST", body: JSON.stringify({ name, price_stars, photo_url }) });
+  document.getElementById("k_name").value = ""; document.getElementById("k_price").value = "";
+  toast("Key added"); loadAdmin(); loadKeys();
+};
+
+document.getElementById("g_add").onclick = async () => {
+  const name = document.getElementById("g_name").value.trim();
+  if (!name) return toast("Enter name");
+  const photo = document.getElementById("g_photo").value.trim() || null;
+  const price_stars = Number(document.getElementById("g_price").value) || 0;
+  await api("/api/admin/gifts", { method: "POST", body: JSON.stringify({ name, photo, price_stars }) });
+  document.getElementById("g_name").value = ""; document.getElementById("g_photo").value = "";
+  toast("Gift added"); loadAdmin();
+};
+
+document.getElementById("contest-finish").onclick = async () => {
+  if (!confirm("Announce winners?")) return;
+  const r = await api("/api/admin/contest/finish", { method: "POST", body: "{}" });
+  toast(`Winners: ${r.winners.length}`); loadContest();
+};
+
+// ===== INIT =====
+(async () => {
+  await refreshMe();
+  renderTopups();
+  await loadKeys();
+  await loadRocket();
+  await loadContest();
+  await loadAdmin(); // Load admin data if elements exist
+})();
+</script>
+</body>
+</html>
